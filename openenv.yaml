@@ -1,0 +1,60 @@
+spec_version: 1
+name: clinical_triage_env
+type: space
+runtime: fastapi
+app: server.app:app
+port: 7860
+
+description: >
+  A multi-step clinical triage AI simulation environment for evaluating
+  AI agent performance on diagnostic reasoning, risk assessment, safety
+  awareness, and decision efficiency under uncertainty.
+
+author: OpenENV Project
+version: "1.0.0"
+
+tasks:
+  - name: easy_triage
+    description: "Complete and clean patient data — direct diagnosis required"
+    max_steps: 15
+    seed: 0
+
+  - name: medium_triage
+    description: "Missing or incomplete patient data — requires info gathering and tests"
+    max_steps: 15
+    seed: 0
+
+  - name: hard_triage
+    description: "Adversarial / ambiguous presentation — escalation awareness required"
+    max_steps: 15
+    seed: 0
+
+action_schema:
+  discriminator: action_type
+  types:
+    - ask_question:
+        question: string
+    - request_test:
+        test_name: string
+    - make_diagnosis:
+        diagnosis: string
+        confidence: "float [0.0, 1.0]"
+    - assign_risk:
+        risk_level: "Critical | Monitor | Routine"
+    - route_patient:
+        department: string
+    - escalate_to_human:
+        reason: string
+    - finalize: {}
+
+observation_schema:
+  symptoms: "list[string]"
+  patient_history: "dict"
+  revealed_tests: "dict"
+  previous_actions: "list[string]"
+  available_actions: "list[string]"
+  step_number: integer
+  done: bool
+  reward: "float | null"
+  info: dict
+  metadata: dict
